@@ -85,9 +85,8 @@
                     <a asp-page="/Index" class="nav-link text-gray-900 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Home</a>
                     <a asp-page="/Privacy" class="nav-link text-gray-500 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Privacy</a>
                     <a href="#features" class="nav-link text-gray-500 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Features</a>
-                    <a href="#pricing" class="nav-link text-gray-500 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Pricing</a>
-                    <a href="/account/register" class="cta-button px-4 py-2 rounded-md text-white text-sm font-medium">
-                        Get Started
+                    <a asp-page="/Accounts/Register" class="cta-button px-4 py-2 rounded-md text-white text-sm font-medium">
+                        Sign Up
                     </a>
                 </div>
                 <div class="flex items-center md:hidden">
@@ -110,10 +109,10 @@
             <div class="hidden md:hidden" id="mobile-menu">
                 <div class="pt-2 pb-3 space-y-1">
                     <a asp-page="/Index" class="mobile-menu-item bg-indigo-50 border-indigo-500 text-indigo-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Home</a>
-                    <a asp-page="/Privacy" class="mobile-menu-item border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Privacy</a>
+                    <a asp-page="#get-started" class="mobile-menu-item border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">About</a>
                     <a href="#features" class="mobile-menu-item border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Features</a>
                     <a href="#pricing" class="mobile-menu-item border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Pricing</a>
-                    <a href="/account/register" class="mobile-menu-item cta-button text-white block pl-3 pr-4 py-2 text-base font-medium text-center mt-4">
+                    <a asp-page="/Accounts/Register" class="mobile-menu-item cta-button text-white block pl-3 pr-4 py-2 text-base font-medium text-center mt-4">
                         Get Started
                     </a>
                 </div>

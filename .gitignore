@@ -1,0 +1,62 @@
+# .gitignore for ASP.NET Core Razor Pages
+
+# Build outputs
+bin/
+obj/
+[Bb]uild/
+[Dd]ebug/
+[Rr]elease/
+*.dll
+*.pdb
+*.exe
+
+# IDE and editor files
+.vs/
+.vscode/
+*.user
+*.suo
+*.sln.iml
+.idea/
+
+# NuGet
+[Nn]u[Gg]et/
+*.nupkg
+packages/
+
+# Node.js
+node_modules/
+npm-debug.log
+
+# User-specific files
+*.rsuser
+*.userprefs
+appsettings.Development.json
+
+# Logs and temp files
+[Tt]emp/
+*.log
+*.etl
+
+# Environment files
+.env
+.env.local
+*.backup.*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Rider specific
+_ReSharper.*
+*.sln.ide
+
+# Visual Studio Code
+.history/
+*.code-workspace
+
+# Azure
+*.azurePubxml
+
+# Local development cache
+.localhistory/
