@@ -1,58 +1,47 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.ComponentModel.DataAnnotations;
+using Client.Services;
+using Client.DTOs.Auth;
 
-namespace ExpenseTracker.Pages.Account
+namespace Client.Pages.Account
 {
     public class RegisterModel : PageModel
     {
+        private readonly AuthService _authService;
+
         [BindProperty]
-        public InputModel Input { get; set; } = new();
+        public SignupRequest Input { get; set; } = new();
 
-        public string? ReturnUrl { get; set; }
+        [TempData]
+        public string? ErrorMessage { get; set; }
 
-        public class InputModel
+        public RegisterModel(AuthService authService)
         {
-            [Required]
-            [EmailAddress]
-            [Display(Name = "Email")]
-            public string Email { get; set; } = string.Empty;
-
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-            [DataType(DataType.Password)]
-            [Display(Name = "Password")]
-            public string Password { get; set; } = string.Empty;
-
-            [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-            public string ConfirmPassword { get; set; } = string.Empty;
+            _authService = authService;
         }
 
-        public void OnGet(string? returnUrl = null)
+        public IActionResult OnGet()
         {
-            ReturnUrl = returnUrl;
+            return Page();
         }
 
-        public IActionResult OnPost(string? returnUrl = null)
+        public async Task<IActionResult> OnPostAsync()
         {
-            returnUrl ??= Url.Content("~/");
-
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                // Static data validation
-                if (Input.Email == "demo@example.com")
-                {
-                    ModelState.AddModelError(string.Empty, "This email is already registered.");
-                    return Page();
-                }
-
-                // Simulate successful registration
-                return LocalRedirect(returnUrl);
+                return Page();
             }
 
-            return Page();
+            try
+            {
+                await _authService.RegisterAsync(Input);
+                return RedirectToPage("./RegisterConfirmation");
+            }
+            catch
+            {
+                ErrorMessage = "Error registering user. Please try again.";
+                return Page();
+            }
         }
     }
 }

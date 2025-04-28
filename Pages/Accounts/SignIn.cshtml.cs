@@ -1,31 +1,60 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Client.Services;
+using Client.DTOs.Auth;
+using System.ComponentModel.DataAnnotations;
 
-namespace ExpenseTracker.Pages.Account
+namespace Client.Pages.Account
 {
     public class SignInModel : PageModel
     {
-        [BindProperty]
-        public string Email { get; set; }
+        private readonly AuthService _authService;
 
         [BindProperty]
-        public string Password { get; set; }
+        public LoginRequest Input { get; set; } = new();
 
         [BindProperty]
         public bool RememberMe { get; set; }
 
-        public IActionResult OnPost()
+        [TempData]
+        public string? ErrorMessage { get; set; }
+
+        public SignInModel(AuthService authService)
         {
-            // Static data for demonstration
-            if (Email == "demo@example.com" && Password == "Demo123!")
+            _authService = authService;
+        }
+
+        public void OnGet()
+        {
+        }
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            if (!ModelState.IsValid)
             {
-                // Simulate successful login
-                return RedirectToPage("/Index");
+                return Page();
             }
 
-            // Add error message for invalid credentials
-            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-            return Page();
+            try
+            {
+                var response = await _authService.LoginAsync(Input);
+                
+                // Store token in secure cookie
+                Response.Cookies.Append("AuthToken", response.Token, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = RememberMe ? DateTime.Now.AddDays(30) : null
+                });
+
+                return RedirectToPage("/Index");
+            }
+            catch
+            {
+                ErrorMessage = "Invalid login attempt.";
+                return Page();
+            }
         }
     }
 }

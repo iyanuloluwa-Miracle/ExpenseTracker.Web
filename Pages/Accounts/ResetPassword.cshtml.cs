@@ -1,65 +1,59 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Client.Services;
+using Client.DTOs.Auth;
 
-namespace ExpenseTracker.Pages.Account
+namespace Client.Pages.Account
 {
     public class ResetPasswordModel : PageModel
     {
+        private readonly AuthService _authService;
+
         [BindProperty]
-        public InputModel Input { get; set; } = new();
+        public ResetPasswordRequest Input { get; set; } = new();
 
-        public class InputModel
+        [BindProperty(SupportsGet = true)]
+        public string? Token { get; set; }
+
+        [TempData]
+        public string? ErrorMessage { get; set; }
+
+        public ResetPasswordModel(AuthService authService)
         {
-            [Required]
-            [EmailAddress]
-            public string Email { get; set; } = string.Empty;
-
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-            [DataType(DataType.Password)]
-            public string Password { get; set; } = string.Empty;
-
-            [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-            public string ConfirmPassword { get; set; } = string.Empty;
-
-            public string Code { get; set; } = string.Empty;
+            _authService = authService;
         }
 
-        public IActionResult OnGet(string? code = null)
+        public IActionResult OnGet(string? token = null)
         {
-            if (code == null)
+            if (token == null)
             {
-                return BadRequest("A code must be supplied for password reset.");
+                return BadRequest("A token must be supplied for password reset.");
             }
             else
             {
-                Input = new InputModel
-                {
-                    Code = code
-                };
+                Input.Token = token;
                 return Page();
             }
         }
 
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            // Static data validation
-            if (Input.Email == "demo@example.com")
+            try
             {
-                // Simulate successful password reset
+                await _authService.ResetPasswordAsync(Input);
                 return RedirectToPage("./ResetPasswordConfirmation");
             }
-
-            // Don't reveal that the user does not exist
-            return RedirectToPage("./ResetPasswordConfirmation");
+            catch
+            {
+                ErrorMessage = "Error resetting password. Please try again.";
+                return Page();
+            }
         }
     }
 }

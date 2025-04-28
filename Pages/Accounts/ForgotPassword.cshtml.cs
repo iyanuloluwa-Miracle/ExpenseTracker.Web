@@ -1,37 +1,47 @@
-using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Client.Services;
+using Client.DTOs.Auth;
 
-namespace ExpenseTracker.Pages.Account
+namespace Client.Pages.Account
 {
     public class ForgotPasswordModel : PageModel
     {
-        [BindProperty]
-        public InputModel Input { get; set; }
+        private readonly AuthService _authService;
 
-        public class InputModel
+        [BindProperty]
+        public ForgotPasswordRequest Input { get; set; } = new();
+
+        [TempData]
+        public string? StatusMessage { get; set; }
+
+        public ForgotPasswordModel(AuthService authService)
         {
-            [Required]
-            [EmailAddress]
-            public string Email { get; set; }
+            _authService = authService;
         }
 
-        public IActionResult OnPost()
+        public void OnGet()
         {
-            if (ModelState.IsValid)
-            {
-                // Static data validation
-                if (Input.Email == "demo@example.com")
-                {
-                    // Simulate successful password reset request
-                    return RedirectToPage("./ForgotPasswordConfirmation");
-                }
+        }
 
-                // Don't reveal that the user does not exist
-                return RedirectToPage("./ForgotPasswordConfirmation");
+        public async Task<IActionResult> OnPostAsync()
+        {
+            if (!ModelState.IsValid)
+            {
+                return Page();
             }
 
-            return Page();
+            try
+            {
+                await _authService.ForgotPasswordAsync(Input);
+                StatusMessage = "If your email is registered, you will receive a password reset link.";
+                return RedirectToPage();
+            }
+            catch
+            {
+                ModelState.AddModelError(string.Empty, "Error sending reset link. Please try again.");
+                return Page();
+            }
         }
     }
 }
